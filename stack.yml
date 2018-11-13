@@ -1,0 +1,13 @@
+provider:
+  name: faas
+  gateway: http://ip-10-0-20-52:31112  # can be a remote server
+  network: "func_functions"       # this is optional and defaults to func_functions
+
+
+## Note for Kubernetes memory specifications:
+## Run: `sed -ie s/40m/40Mi/g stack.yml`
+functions:
+  ruby-provider:
+    lang: ruby
+    handler: ./function/
+    image: getdtk/ruby-provider

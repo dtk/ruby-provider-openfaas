@@ -1,0 +1,40 @@
+---
+module: dtk-provider/ruby-provider
+version: 1.0.1
+component_defs:
+  ruby-provider:
+    attributes:
+      version:
+        type: string
+        default: 1
+  provider:
+    attributes:
+      ruby_version:
+        type: string
+        description: version of MRI interpreter
+        default: 2.3.3
+      gems:
+        type: array
+        description: an array where each item is either 'gem' or gem/version'
+      entrypoint:
+        type: string
+        description: relative path of code to call to execute ruby code
+        required: true
+  container:
+    attributes:
+      dockerfile:
+        type: string
+        constant: true
+        default: |
+          FROM ruby:{{ruby_version}}
+          MAINTAINER dtk <support.dtk.com>
+          RUN gem install aws-sdk -v 3.0.1 --no-ri --no-rdoc
+          RUN gem install rest-client --no-ri --no-rdoc
+          RUN gem install google-protobuf -v 3.3.0 --no-ri --no-rdoc
+          RUN gem install grpc -v 1.4.5 --no-ri --no-rdoc
+          {{#gems}}
+          RUN gem install {{.}} --no-ri --no-rdoc
+          {{/gems}}
+          RUN sleep 1000
+
+          ENTRYPOINT "/usr/share/dtk/modules/ruby-provider/init"
